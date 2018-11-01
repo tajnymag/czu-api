@@ -1,0 +1,30 @@
+{
+	"name": "czu-timetable-api",
+	"version": "0.5.0",
+	"main": "src/index.js",
+	"author": "Marek Lukáš",
+	"license": "MIT",
+	"scripts": {
+		"test": "ts-node -r dotenv/config test/*",
+		"serve": "ts-node -r dotenv/config src/server.ts"
+	},
+	"dependencies": {
+		"cheerio": "^1.0.0-rc.2",
+		"date-fns": "^1.29.0",
+		"express": "^4.16.3",
+		"ics": "^2.8.0",
+		"request": "^2.88.0",
+		"request-promise-native": "^1.0.5",
+		"response-time": "^2.3.2"
+	},
+	"devDependencies": {
+		"@types/cheerio": "^0.22.9",
+		"@types/express": "^4.16.0",
+		"@types/request-promise-native": "^1.0.15",
+		"@types/response-time": "^2.3.2",
+		"dotenv": "^6.1.0",
+		"prettier": "^1.14.3",
+		"ts-node": "^7.0.1",
+		"typescript": "^3.1.1"
+	}
+}

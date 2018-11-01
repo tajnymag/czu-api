@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"target": "ES2017",
+		"sourceMap": true,
+		"outDir": "dist",
+		"module": "CommonJS",
+		"moduleResolution": "node"
+	},
+	"include": ["src/*"],
+	"exclude": ["test", "node_modules"]
+}
