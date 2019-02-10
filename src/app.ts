@@ -23,10 +23,10 @@ app.get('/api/v1/:lang/timetable/json', async (req, res) => {
 		});
 		await uis.login();
 
-		const events = await uis.getTimetable(new Date(), new Date('2018/12/30'), req.params.lang);
+		const events = await uis.getTimetable(new Date(), new Date('2019/09/06'), req.params.lang);
 
 		cache.set(process.env.CZUNAME, JSON.stringify(events));
-		res.send(JSON.stringify(events));
+		res.json(events);
 	}
 });
 
@@ -40,13 +40,14 @@ app.get('/api/v1/:lang/timetable/ics', async (req, res) => {
 		});
 		await uis.login();
 
-        const events = await uis.getTimetable(new Date(), new Date('2018/12/30'), req.params.lang);
-		const { error, ical } = ics.createEvents(events);
+        const events = await uis.getTimetable(new Date(), new Date('2019/09/06'), req.params.lang);
+		const { error, value: ical } = ics.createEvents(events);
 
 		if (error) {
 			console.error(error);
 		} else {
 			cache.set(process.env.CZUNAME, ical);
+			res.set('Content-Type', 'text/calendar');
 			res.send(ical);
 		}
 	}

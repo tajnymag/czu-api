@@ -5,7 +5,7 @@
 	"author": "Marek Lukáš",
 	"license": "MIT",
 	"scripts": {
-		"test": "ts-node -r dotenv/config test/*",
+		"test": "ts-node -r dotenv/config test/uis.test.ts",
 		"serve": "ts-node -r dotenv/config src/server.ts"
 	},
 	"dependencies": {

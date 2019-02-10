@@ -1,5 +1,4 @@
 import * as cheerio from 'cheerio';
-import {writeFileSync} from 'fs';
 
 export function parseCzuDate(date, time): Date {
 	const dateRegex = /(\d\d)[./](\d\d)[./](\d\d\d\d)/;
@@ -13,8 +12,6 @@ export function parseCzuDate(date, time): Date {
 export function parseTimetableHtml(html) {
 	const $ = cheerio.load(html);
 	const events = [];
-
-	//writeFileSync(__dirname + '/rozvrh.html', html);
 
 	$('#tmtab_1 tbody tr').each((i, el) => {
 		const tr = $(el);

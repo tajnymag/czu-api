@@ -1,5 +1,3 @@
-import { parse } from 'juration';
-
 interface CacheEntry {
 	value: string;
 	expirationDate: number;
