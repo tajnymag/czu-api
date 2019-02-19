@@ -4,8 +4,11 @@
 		"sourceMap": true,
 		"outDir": "dist",
 		"module": "CommonJS",
-		"moduleResolution": "node"
+		"moduleResolution": "node",
+		"resolveJsonModule": true
 	},
-	"include": ["src/*"],
+	"files": [
+		"src/cli/index.ts"
+	],
 	"exclude": ["test", "node_modules"]
 }

@@ -1,20 +1,21 @@
 import * as request from 'request-promise-native';
-import { format as formatDate } from 'date-fns';
+import { addWeeks, format as formatDate } from 'date-fns';
 import { UISCookie, parseHeader } from './cookie';
 import { parseTimetableHtml } from './czu-fns';
 
-interface CredentialsWithPassword {
+export interface CredentialsWithPassword {
 	username: string;
 	password: string;
-	cookie?: never;
+	cookie?: number;
 	timetableId?: number;
 }
-interface CredentialsWithCookie {
+export interface CredentialsWithCookie {
 	username?: never;
 	password?: never;
 	cookie: number;
 	timetableId?: number;
 }
+export type Credentials = CredentialsWithCookie | CredentialsWithPassword;
 
 export default class UisApi {
 	private username: string;
@@ -22,9 +23,9 @@ export default class UisApi {
 	private cookie: UISCookie;
 	private timetableId: number;
 
-	constructor(credentials: CredentialsWithPassword | CredentialsWithCookie) {
+	constructor(credentials: Credentials) {
 		if ((!credentials.username || !credentials.password) && !credentials.cookie) {
-			throw 'Tried to run UisApi constructor without credentials';
+			throw new Error('Tried to run UisApi constructor without credentials');
 		}
 
 		if (credentials.username) {
@@ -62,12 +63,16 @@ export default class UisApi {
 				const response = await request(requestConfig);
 				this.cookie = new UISCookie(parseHeader(response.headers['set-cookie'][0]).value);
 			} catch (e) {
-				console.error(e);
+				throw new Error('Could not get the login cookie!');
 			}
 		}
 	}
 
-	async getTimetable(from: Date, to: Date, lang: string = 'cz') {
+	async getTimetable(
+		from: Date = new Date(),
+		to: Date = addWeeks(new Date(), 1),
+		lang: string = 'cz'
+	) {
 		if (!this.cookie) {
 			await this.login();
 		}
