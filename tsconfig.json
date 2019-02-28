@@ -5,10 +5,11 @@
 		"outDir": "dist",
 		"module": "CommonJS",
 		"moduleResolution": "node",
+		"declaration": true,
 		"resolveJsonModule": true
 	},
 	"files": [
-		"src/cli/index.ts"
+		"src/index.ts"
 	],
 	"exclude": ["test", "node_modules"]
 }

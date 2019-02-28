@@ -1,28 +1,29 @@
-# czu-cli
+# czu-api
 
-As simple cli as possible for Czech University of Life Sciences Prague.
-
-Currently supports only extraction and conversion of student's timetable.
+Essential api package for Czech University of Life Sciences Prague.
 
 ## Installation
 ```bash
-git clone https://github.com/Tajnymag/czu-cli
-cd czu-cli
-yarn install && yarn build
+yarn add czu-api
 ```
 
-## Run
-```bash
-# help
-yarn cli --help
+## Usage
+```typescript
+import UisApi from 'czu-api';
 
-# print current timetable as iCalendar
-yarn cli timetable --username "xlukm014" --password "hunter2" --format ics
+(async () => {
+    const uis = new UisApi({username: 'xname015', password: 'hunter2'});
+
+    await uis.login();
+
+    const timetableJSON = await uis.getTimetable();
+
+    console.log(timetableJSON);
+})()
 ```
 
 ## Upcoming features
-* easier installation (precompiled binary)
-* uemp support
+* uep support
 * searching for empty classroom
 * monitoring of timetable changes
 
