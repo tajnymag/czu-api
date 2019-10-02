@@ -1,6 +1,6 @@
 {
 	"name": "czu-api",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"author": "Marek Lukáš",
@@ -11,7 +11,6 @@
 	"dependencies": {
 		"cheerio": "^1.0.0-rc.2",
 		"date-fns": "^1.29.0",
-		"ics": "^2.8.0",
 		"request": "^2.88.0",
 		"request-promise-native": "^1.0.5"
 	},
@@ -19,7 +18,7 @@
 		"@types/cheerio": "^0.22.9",
 		"@types/request-promise-native": "^1.0.15",
 		"@types/response-time": "^2.3.2",
-		"dotenv": "^6.1.0",
+		"dotenv": "^8.1.0",
 		"prettier": "^1.14.3",
 		"typescript": "^3.1.1"
 	}

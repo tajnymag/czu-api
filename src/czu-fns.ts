@@ -47,7 +47,7 @@ export function parseTimetableHtml(html) {
 			title: row[3],
 			description: row[4],
 			location: row[5],
-			organizer: { name: row[6], email: 'not@available.sorry' },
+			organizer: { name: row[6], email: 'sorry@not.available.yet.com' },
 			categories: [row[4]]
 		});
 	});
