@@ -1,7 +1,11 @@
-import * as request from 'request-promise-native';
+import * as qs from 'qs';
+import { AxiosRequestConfig } from 'axios';
 import { addWeeks, format as formatDate } from 'date-fns';
-import { UISCookie, parseHeader } from './cookie';
-import { parseTimetableHtml } from './czu-fns';
+
+import { UISCookie } from './cookie';
+import { http } from './http';
+import { Timetable } from './timetable';
+import { RoomSchedule } from './rooms';
 
 export interface CredentialsWithPassword {
 	username: string;
@@ -21,7 +25,6 @@ export default class UisApi {
 	private username: string;
 	private password: string;
 	private cookie: UISCookie;
-	private timetableId: number;
 
 	constructor(credentials: Credentials) {
 		if ((!credentials.username || !credentials.password) && !credentials.cookie) {
@@ -34,38 +37,6 @@ export default class UisApi {
 		} else {
 			this.cookie = new UISCookie(credentials.cookie);
 		}
-
-		if (credentials.timetableId) {
-			this.timetableId = credentials.timetableId;
-		}
-	}
-
-	async login(): Promise<void> {
-		if (!this.cookie) {
-			const requestConfig = {
-				method: 'POST',
-				uri: 'https://is.czu.cz/system/login.pl',
-				form: {
-					login_hidden: 1,
-					destination: '/auth/',
-					auth_id_hidden: 0,
-					credential_0: this.username,
-					credential_1: this.password,
-					credential_k: '',
-					credential_2: 86400 * 24 //4 days
-				},
-				followRedirect: false,
-				resolveWithFullResponse: true,
-				simple: false
-			};
-
-			try {
-				const response = await request(requestConfig);
-				this.cookie = new UISCookie(parseHeader(response.headers['set-cookie'][0]).value);
-			} catch (e) {
-				throw new Error('Could not get the login cookie!');
-			}
-		}
 	}
 
 	async getTimetable(
@@ -74,13 +45,12 @@ export default class UisApi {
 		lang: string = 'cz'
 	) {
 		if (!this.cookie) {
-			await this.login();
+			await http.login(this.username, this.password);
 		}
 
-		const requestConfig = {
-			method: 'POST',
-			uri: 'https://is.czu.cz/auth/katalog/rozvrhy_view.pl',
-			form: {
+		const requestConfig: AxiosRequestConfig = {
+			url: 'https://is.czu.cz/auth/katalog/rozvrhy_view.pl',
+			params: {
 				z: 1,
 				k: 1,
 				osobni: 1,
@@ -99,17 +69,57 @@ export default class UisApi {
 				zobraz: 1,
 				zobraz2: 'Zobrazit',
 				lang: lang
-			},
-			headers: {
-				Cookie: this.cookie.toString()
 			}
 		};
 
 		try {
-			const response = await request(requestConfig);
-			return parseTimetableHtml(response);
+			const response = await http.get(requestConfig.url, requestConfig);
+			return Timetable.fromHtml(response.data).events;
 		} catch (e) {
-			console.error(e);
+			throw new Error('Could not get the timetable because:\n' + e.message);
+		}
+	}
+
+	async getRooms(date: Date) {
+		if (date.getDay() < 1 || date.getDay() > 5) {
+			throw new Error('Incorrect day number. Day index must be inclusively between 1 and 5');
+		}
+
+		if (!this.cookie) {
+			await http.login(this.username, this.password);
+		}
+
+		const requestConfig: AxiosRequestConfig = {};
+		const requestData = qs.stringify({
+			z: '1',
+			k: '1',
+			rozvrh: '1000',
+			rezervace: '1',
+			poznamky_base: '1',
+			poznamky_zmeny: '1',
+			poznamky_parovani: '1',
+			poznamky_jiny_areal: '1',
+			poznamky_dl_omez: '1',
+			typ_vypisu: 'konani',
+			konani_od: formatDate(date, 'DD.MM.YYYY'),
+			konani_do: formatDate(date, 'DD.MM.YYYY'),
+			format: 'list',
+			poznamky: '1',
+			poznamky_dalsi_ucit: '1',
+			zobraz: '1',
+			zobraz2: 'Zobrazit',
+			lang: 'cz'
+		});
+
+		try {
+			const response = await http.post(
+				'https://is.czu.cz/auth/katalog/rozvrhy_view.pl',
+				requestData,
+				requestConfig
+			);
+			return RoomSchedule.fromHtml(response.data).findEmptyRooms();
+		} catch (err) {
+			throw new Error(err);
 		}
 	}
 }
