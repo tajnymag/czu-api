@@ -13,7 +13,7 @@
 		"cheerio": "^1.0.0-rc.2",
 		"date-fns": "^1.29.0",
 		"qs": "^6.9.0",
-		"xlsx": "^0.15.1"
+		"xlsx": "^0.17.0"
 	},
 	"devDependencies": {
 		"@types/cheerio": "^0.22.9",
